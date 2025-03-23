@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
+
+
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Sport\SportController;
 use App\Http\Controllers\Summary\SummaryController;
-
+use App\Http\Controllers\Account\AccountController;
 // Route::get('/user-public', function (Request $request) {
 //     $users = User::get();
 //     return $users;
@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         // Admin creates a sport
         Route::post('/sports', [SportController::class, 'store']);
+        Route::post('/users', [AccountController::class, 'createUser']);
 
         // summay
         Route::get('/summary',[SummaryController::class, 'summary']);
@@ -40,5 +41,22 @@ Route::middleware('auth:sanctum')->group(function () {
         // Add other coach routes here
     });
 });
+
+Route::get('/storage/{path}', function ($path) {
+    $file = storage_path('app/public/' . $path);
+
+    if (!file_exists($file)) {
+        return response()->json([
+            'error' => 'File not found',
+            'path' => $file,
+            'exists' => file_exists($file) ? 'Yes' : 'No'
+        ], 404);
+    }
+
+    return response()->file($file, [
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+    ]);
+})->where('path', '.*');
 
 

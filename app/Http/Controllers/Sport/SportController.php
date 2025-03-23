@@ -22,14 +22,26 @@ class SportController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|unique:sports']);
+        $request->validate([
+            'name' => 'required|unique:sports',
+            'descriptions' => 'required',
+            'image' => 'nullable|image|max:2048' // Allow image uploads
+        ]);
+
+        // Handle image upload
+        $imagePath = $request->file('image') ? $request->file('image')->store('sports', 'public') : null;
 
         $sport = Sport::create([
             'name' => $request->name,
-            'created_by' => auth()->id(), // Admin who created the sport
+            'descriptions' => $request->descriptions,
+            'image' => $imagePath,
+            'created_by' => auth()->id(),
         ]);
 
-        return response()->json(['sport' => $sport], 201);
+        return response()->json([
+            'message' => 'Sport created successfully!',
+            'sport' => $sport
+        ], 201);
     }
 
     /**
