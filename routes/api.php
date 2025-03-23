@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Sport\SportController;
+use App\Http\Controllers\Summary\SummaryController;
 
 // Route::get('/user-public', function (Request $request) {
 //     $users = User::get();
@@ -23,7 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         // Admin creates a sport
-        Route::post('/sports', [SportController::class, 'store'])->middleware('auth:admin');
+        Route::post('/sports', [SportController::class, 'store']);
+
+        // summay
+        Route::get('/summary',[SummaryController::class, 'summary']);
     });
 
     Route::prefix('athlete')->group(function () {
