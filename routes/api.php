@@ -13,7 +13,7 @@ use App\Http\Controllers\Sport\SportController;
 
 // Authentication Routes
 
-Route::post('/test', [AuthController::class, 'api_test']);
+Route::get('/test', [AuthController::class, 'api_test']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
