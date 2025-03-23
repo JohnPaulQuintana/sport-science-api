@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+// models
+use App\Models\SportAssignment;
 
 class User extends Authenticatable
 {
@@ -47,4 +49,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get all sports assigned to this user (as Coach or Athlete).
+     */
+    public function assignedSports()
+    {
+        return $this->hasMany(SportAssignment::class, 'user_id');
+    }
+
+    /**
+     * Get all sports where this user is a Coach.
+     */
+    public function sportsAsCoach()
+    {
+        return $this->hasMany(SportAssignment::class, 'user_id')->where('role', 'coach');
+    }
+
+    /**
+     * Get all sports where this user is an Athlete.
+     */
+    public function sportsAsAthlete()
+    {
+        return $this->hasMany(SportAssignment::class, 'user_id')->where('role', 'athlete');
+    }
+
 }

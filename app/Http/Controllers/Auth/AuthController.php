@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    // test the api
+    public function api_test()
+    {
+        return response()->json(['status'=>200, 'message'=>"api is now available.."]);
+    }
     // Login API
     public function login(Request $request)
     {
