@@ -17,9 +17,11 @@ class SummaryController extends Controller
             ->first();
 
         $sports = Sport::get();
+        $users = User::where('role','!=','admin')->get();
 
         return response()->json([
             'sports_record' => $sports,
+            'user_record' => $users,
             'sports' => Sport::count(),
             'coaches' => (int) $counts->coaches ?? 0,
             'athletes' => (int) $counts->athletes ?? 0,

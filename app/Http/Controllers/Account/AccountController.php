@@ -18,11 +18,11 @@ class AccountController extends Controller
             'name' => 'required',
             'email' => 'required',
             'role' => 'required',
-            'image' => 'nullable|image|max:2048' // Allow image uploads
+            // 'image' => 'nullable|image|max:2048' // Allow image uploads
         ]);
 
-        // Handle image upload
-        $imagePath = $request->file('image') ? $request->file('image')->store('profile', 'public') : null;
+        // // Handle image upload
+        // // $imagePath = $request->file('image') ? $request->file('image')->store('profile', 'public') : null;
 
         $user = User::create([
             'name' => $request->name,
@@ -37,6 +37,10 @@ class AccountController extends Controller
             'message' => 'User created successfully!',
             'user' => $user
         ], 201);
+
+        // return response()->json([
+        //     'message' =>"test response"
+        // ],201);
     }
 
 }

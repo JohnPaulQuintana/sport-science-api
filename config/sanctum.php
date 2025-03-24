@@ -15,11 +15,20 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort()
-    ))),
+    // 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+    //     '%s%s',
+    //     'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+    //     Sanctum::currentApplicationUrlWithPort()
+    // ))),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', implode(',', [
+        'localhost',
+        'localhost:5173', // Add your Vite frontend port
+        '127.0.0.1',
+        '127.0.0.1:8000', // Laravel API server
+        '127.0.0.1:8001', // If using different port for API
+        '::1',
+    ]))),
+
 
     /*
     |--------------------------------------------------------------------------

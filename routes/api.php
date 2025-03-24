@@ -42,6 +42,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::options('{any}', function () {
+    return response()->json(['status' => 'OK'], 200, [
+        'Access-Control-Allow-Origin' => 'http://localhost:5173',
+        'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
+        'Access-Control-Allow-Credentials' => 'true',
+    ]);
+})->where('any', '.*');
+
+
 Route::get('/storage/{path}', function ($path) {
     $file = storage_path('app/public/' . $path);
 
