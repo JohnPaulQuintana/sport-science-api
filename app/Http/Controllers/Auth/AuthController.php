@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +19,7 @@ class AuthController extends Controller
     // test the api
     public function api_test()
     {
-        return response()->json(['status'=>200, 'message'=>"api is now available.."]);
+        return response()->json(['status' => 200, 'message' => "api is now available.."]);
     }
     // Login API
     public function login(Request $request)
@@ -76,7 +78,7 @@ class AuthController extends Controller
         $token = Password::createToken(User::where('email', $request->email)->first());
 
         // Send Reset Email
-        Mail::to($request->email)->send(new ResetPasswordMail($token,$request->reset_link));
+        Mail::to($request->email)->send(new ResetPasswordMail($token, $request->reset_link));
 
         return response()->json([
             'status' => 'success',
@@ -120,6 +122,86 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password reset successful']);
     }
 
+    public function update(Request $request)
+    {
+        // Remove 'password' and 'image' from validation if they are missing from request
+        $rules = [
+            'id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ];
+
+        if ($request->has('password') && !empty($request->password)) {
+            $rules['password'] = 'string|min:6';
+        }
+
+        if ($request->hasFile('image')) {
+            $rules['image'] = 'image|max:2048';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        try {
+            DB::beginTransaction();
+
+            // Find the user
+            $user = User::findOrFail($validatedData['id']);
+
+            // Track if something changed
+            $hasChanges = false;
+
+            // Update name and email if changed
+            if ($user->name !== $validatedData['name']) {
+                $user->name = $validatedData['name'];
+                $hasChanges = true;
+            }
+
+            if ($user->email !== $validatedData['email']) {
+                $user->email = $validatedData['email'];
+                $hasChanges = true;
+            }
+
+            // Handle image upload only if provided
+            if ($request->hasFile('image')) {
+                // Delete old image if it exists
+                if (!empty($user->profile)) {
+                    Storage::disk('public')->delete($user->profile);
+                }
+
+                // Store new image
+                $imagePath = $request->file('image')->store('profile', 'public');
+                $user->profile = $imagePath;
+                $hasChanges = true;
+            }
+
+            // Update password only if provided
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+                $hasChanges = true;
+            }
+
+            // If nothing was updated, return a separate response
+            if (!$hasChanges) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'No changes made.',
+                    'user' => $user
+                ], 200);
+            }
+
+            $user->save();
+            DB::commit();
+
+            return response()->json([
+                'message' => 'User updated successfully!',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Something went wrong! ' . $e->getMessage()], 500);
+        }
+    }
+
 
     public function logout(Request $request)
     {
@@ -133,5 +215,4 @@ class AuthController extends Controller
             'message' => 'Successfully logged out'
         ]);
     }
-
 }

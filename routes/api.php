@@ -40,6 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         // Add other coach routes here
     });
+
+    Route::prefix('profile')->group(function(){
+        Route::post('/update', [AuthController::class, 'update']);
+    });
 });
 
 Route::options('{any}', function () {
