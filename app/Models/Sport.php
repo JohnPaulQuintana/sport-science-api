@@ -53,4 +53,10 @@ class Sport extends Model
     {
         return $this->hasOne(GroupChat::class, 'sport_id');
     }
+
+    // get categories
+    public function categories()
+    {
+        return $this->hasMany(PerformanceCategory::class, 'sport_id');;
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Sport;
 
 use App\Http\Controllers\Controller;
+use App\Models\GroupChat;
+use App\Models\GroupChatUser;
 use Illuminate\Http\Request;
 
 // model
@@ -47,6 +49,18 @@ class SportController extends Controller
                 'user_id' => $request->coach_id,
                 'role' => 'coach',
             ]);
+
+            // create a groupchat for that sports
+            $groupChat = GroupChat::create([
+                'sport_id' => $sport->id,
+            ]);
+
+            if($groupChat){
+                GroupChatUser::create([
+                    "group_chat_id"=>$groupChat->id,
+                    "user_id"=>$request->coach_id,
+                ]);
+            }
         }
 
         return response()->json([
@@ -98,6 +112,7 @@ class SportController extends Controller
                         'user_id' => $request->coach_id,
                     ]);
                 }
+
             }
 
             return response()->json(['message' => 'Sport updated successfully!', 'sport' => $sport]);
@@ -162,6 +177,12 @@ class SportController extends Controller
             'sport_id' => $request->sport_id,
             'user_id' => $athlete->id,
             'role' => 'athlete',
+        ]);
+
+        $groupChat = GroupChat::where('sport_id',$request->sport_id)->first();
+        GroupChatUser::create([
+            "group_chat_id"=>$groupChat->id,
+            "user_id"=>$athlete->id,
         ]);
 
         return response()->json(['message' => 'Athlete assigned successfully']);

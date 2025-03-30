@@ -9,6 +9,8 @@ use App\Http\Controllers\Summary\SummaryController;
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Athlete\AthleteController;
 use App\Http\Controllers\GroupChat\GroupChatController;
+use App\Http\Controllers\Performance\PerformanceCategoryController;
+
 // Route::get('/user-public', function (Request $request) {
 //     $users = User::get();
 //     return $users;
@@ -66,6 +68,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/groupusers/{id}', [GroupChatController::class, 'users']); // Get all group chats of user
         Route::get('/groupchats/{id}', [GroupChatController::class, 'show']); // Get chat messages
         Route::post('/groupchats/{id}/send', [GroupChatController::class, 'sendMessage']); // Send message
+    });
+
+    Route::prefix('performance')->group(function(){
+        Route::post('/category/create', [PerformanceCategoryController::class, 'store']);
+        Route::post('/category/update', [PerformanceCategoryController::class, 'update']);
+        Route::get('/categories/{sport_id}', [PerformanceCategoryController::class, 'sportCategories']);
     });
 
     Route::prefix('linear')->group(function(){

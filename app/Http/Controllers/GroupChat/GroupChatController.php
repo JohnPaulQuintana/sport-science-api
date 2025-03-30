@@ -23,7 +23,8 @@ class GroupChatController extends Controller
     // get all the users on the groupchats
     public function users($id)
     {
-        $groupChatUsers = GroupChat::where('id',$id)->with('users')->get();
+        // return group member on selected sports with sport category performance
+        $groupChatUsers = GroupChat::where('id',$id)->with(['users','sport.categories'])->get();
         return response()->json([
             'status' => 'success',
             'group_users' => $groupChatUsers
