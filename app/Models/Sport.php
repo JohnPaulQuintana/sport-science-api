@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 // models
 use App\Models\User;
 use App\Models\SportAssignment;
+use App\Models\GroupChat;
 
 class Sport extends Model
 {
@@ -47,4 +48,9 @@ class Sport extends Model
         return $this->hasMany(SportAssignment::class, 'sport_id')->where('role', 'athlete');
     }
 
+    // Get the group chats
+    public function group()
+    {
+        return $this->hasOne(GroupChat::class, 'sport_id');
+    }
 }

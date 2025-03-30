@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Sport\SportController;
 use App\Http\Controllers\Summary\SummaryController;
 use App\Http\Controllers\Account\AccountController;
+use App\Http\Controllers\Athlete\AthleteController;
+use App\Http\Controllers\GroupChat\GroupChatController;
 // Route::get('/user-public', function (Request $request) {
 //     $users = User::get();
 //     return $users;
@@ -25,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         // Admin creates a sport
         Route::post('/sports', [SportController::class, 'store']);
+        Route::post('/sports-edit', [SportController::class, 'edit']);
+
         Route::post('/users', [AccountController::class, 'createUser']);
 
         // summay
@@ -32,17 +36,40 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('athlete')->group(function () {
+         // summay
+        Route::get('/summary-athlete',[SummaryController::class, 'summaryAthelete']);
+
+        Route::post('/assign-sport',[SportController::class,'assignAthlete']);
+
+        Route::get('/sport/{id}', [SportController::class, 'getSportById']);
+
         Route::post('/logout', [AuthController::class, 'logout']);
         // Add other athlete routes here
     });
 
     Route::prefix('coach')->group(function () {
+        // summay
+        Route::get('/summary-coach',[SummaryController::class, 'summaryCoach']);
+
+        Route::get('/sport/{id}', [SportController::class, 'getSportById']);
+
         Route::post('/logout', [AuthController::class, 'logout']);
         // Add other coach routes here
     });
 
     Route::prefix('profile')->group(function(){
         Route::post('/update', [AuthController::class, 'update']);
+    });
+
+    Route::prefix('communication')->group(function(){
+        Route::get('/groupchats', [GroupChatController::class, 'index']); // Get all group chats of user
+        Route::get('/groupusers/{id}', [GroupChatController::class, 'users']); // Get all group chats of user
+        Route::get('/groupchats/{id}', [GroupChatController::class, 'show']); // Get chat messages
+        Route::post('/groupchats/{id}/send', [GroupChatController::class, 'sendMessage']); // Send message
+    });
+
+    Route::prefix('linear')->group(function(){
+        Route::post('/athlete/predict', [AthleteController::class, 'predictPerformance']);
     });
 });
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Sport;
 use App\Models\User;
 use App\Models\SportAssignment;
+use Illuminate\Support\Facades\Redis;
 
 class SportController extends Controller
 {
@@ -25,7 +26,8 @@ class SportController extends Controller
         $request->validate([
             'name' => 'required|unique:sports',
             'descriptions' => 'required',
-            'image' => 'nullable|image|max:2048' // Allow image uploads
+            'image' => 'nullable|image|max:2048', // Allow image uploads
+            'coach_id' => 'required|exists:users,id',
         ]);
 
         // Handle image upload
@@ -38,10 +40,82 @@ class SportController extends Controller
             'created_by' => auth()->id(),
         ]);
 
+        if ($sport) {
+            // assign the coach
+            SportAssignment::create([
+                'sport_id' => $sport->id,
+                'user_id' => $request->coach_id,
+                'role' => 'coach',
+            ]);
+        }
+
         return response()->json([
             'message' => 'Sport created successfully!',
             'sport' => $sport
         ], 201);
+    }
+
+    // edit sport
+    public function edit(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'sport_id' => 'required|exists:sports,id',
+                'name' => 'required',
+                'descriptions' => 'required',
+                // 'image' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ensure it's a file
+                'coach_id' => 'required|exists:users,id',
+            ]);
+
+            $sport = Sport::findOrFail($request->sport_id);
+
+            // Handle image upload if a new image is provided
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('sports_images', 'public');
+                $sport->image = $imagePath;
+            }
+
+            // Update sport details
+            $sport->update([
+                'name' => $request->name,
+                'descriptions' => $request->descriptions,
+                'created_by' => auth()->id(),
+            ]);
+
+            if ($sport) {
+                // Find the existing sport assignment
+                $assignSport = SportAssignment::where('sport_id', $request->sport_id)
+                    // ->where('user_id', $request->coach_id)
+                    ->first();
+                // return response()->json(['assign'=>$assignSport]);
+                if ($assignSport) {
+                    // Update if assignment exists
+                    $assignSport->update(['user_id' => $request->coach_id]);
+                } else {
+                    // Create a new assignment if not found
+                    SportAssignment::create([
+                        'sport_id' => $request->sport_id,
+                        'user_id' => $request->coach_id,
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Sport updated successfully!', 'sport' => $sport]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+    }
+
+    //get sport by id
+    public function getSportById(Request $request, $id)
+    {
+        $athletes = User::where('role','athlete')->get();
+        $sport = Sport::with(['group','athletes'])->findOrFail($id);
+        return response()->json([
+            'status'=>200,
+            'sport' => $sport,
+            'athletes' => $athletes
+        ]);
     }
 
     /**
@@ -74,6 +148,7 @@ class SportController extends Controller
     public function assignAthlete(Request $request, Sport $sport)
     {
         $request->validate([
+            'sport_id' => 'required|exists:sports,id',
             'athlete_id' => 'required|exists:users,id',
         ]);
 
@@ -84,7 +159,7 @@ class SportController extends Controller
         }
 
         SportAssignment::create([
-            'sport_id' => $sport->id,
+            'sport_id' => $request->sport_id,
             'user_id' => $athlete->id,
             'role' => 'athlete',
         ]);

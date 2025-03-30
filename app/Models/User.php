@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // models
 use App\Models\SportAssignment;
 
@@ -73,6 +74,10 @@ class User extends Authenticatable
     public function sportsAsAthlete()
     {
         return $this->hasMany(SportAssignment::class, 'user_id')->where('role', 'athlete');
+    }
+
+    public function groupChats(): BelongsToMany {
+        return $this->belongsToMany(GroupChat::class, 'group_chat_users');
     }
 
 }
