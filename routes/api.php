@@ -74,9 +74,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/category/create', [PerformanceCategoryController::class, 'store']);
         Route::post('/category/update', [PerformanceCategoryController::class, 'update']);
         Route::get('/categories/{sport_id}', [PerformanceCategoryController::class, 'sportCategories']);
+        Route::post('/category/insert', [PerformanceCategoryController::class, 'sportCategoryValue']);
+        Route::post('/category/edit', [PerformanceCategoryController::class, 'sportCategoryValueEdit']);
     });
 
     Route::prefix('linear')->group(function(){
+        Route::get('performance/chart/{sport_id}',[PerformanceCategoryController::class, 'chartData']);
+        Route::get('performance/chart-athlete/{sport_id}',[PerformanceCategoryController::class, 'chartDataAthlete']);
         Route::post('/athlete/predict', [AthleteController::class, 'predictPerformance']);
     });
 });

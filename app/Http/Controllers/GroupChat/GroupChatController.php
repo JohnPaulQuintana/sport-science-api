@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class GroupChatController extends Controller
 {
     // Get all group chats for the authenticated user
-    public function index() {
+    public function index()
+    {
         $groupChats = Auth::user()->groupChats()->with('sport')->get();
 
         return response()->json([
@@ -24,7 +25,15 @@ class GroupChatController extends Controller
     public function users($id)
     {
         // return group member on selected sports with sport category performance
-        $groupChatUsers = GroupChat::where('id',$id)->with(['users','sport.categories'])->get();
+        // $groupChatUsers = GroupChat::where('id',$id)->with(['users','sport.categories.performances'])->get();
+        $groupChatUsers = GroupChat::where('id', $id)->with([
+                'users',
+                'sport.categories.performances' => function ($query) {
+                    $query->whereDate('recorded_at', today());
+                }
+            ])
+            ->get();
+
         return response()->json([
             'status' => 'success',
             'group_users' => $groupChatUsers
@@ -32,7 +41,8 @@ class GroupChatController extends Controller
     }
 
     // Get messages for a specific group chat
-    public function show($id) {
+    public function show($id)
+    {
         $groupChat = GroupChat::with(['messages.sender'])->findOrFail($id);
 
         return response()->json([
@@ -42,7 +52,8 @@ class GroupChatController extends Controller
     }
 
     // Send a message in a group chat
-    public function sendMessage(Request $request, $id) {
+    public function sendMessage(Request $request, $id)
+    {
         $request->validate(['message' => 'required|string']);
 
         $message = Message::create([
