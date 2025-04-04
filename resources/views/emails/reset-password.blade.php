@@ -62,6 +62,8 @@
         <p>You requested a password reset. Click the button below to reset your password:</p>
         <a href="{{ $reset_link }}?token={{ $token }}"  class="button">Reset Password</a>
         <p>If you did not request this, please ignore this email.</p>
+        <p>If button not working click this link or copy</p>
+        <a href="{{ $reset_link }}?token={{ $token }}">{{ $reset_link }}?token={{ $token }}</a>
         <p class="footer">&copy; {{ date('Y') }} Sport Science. All rights reserved.</p>
     </div>
 </body>
