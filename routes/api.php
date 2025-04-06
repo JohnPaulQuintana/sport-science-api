@@ -113,3 +113,6 @@ Route::get('/storage/{path}', function ($path) {
 })->where('path', '.*');
 
 
+// testing for analysis
+Route::get('performance/analysis/{sport_id}',[PerformanceCategoryController::class, 'analyzePerformance']);
+Route::get('performance/analysis/single/{sport_id}',[PerformanceCategoryController::class, 'getSingleAthletePerformance']);

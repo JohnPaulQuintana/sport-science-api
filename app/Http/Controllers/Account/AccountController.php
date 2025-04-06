@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\NotifyUserAccountMail;
+use Illuminate\Support\Facades\Mail;
 
 class AccountController extends Controller
 {
@@ -28,10 +30,16 @@ class AccountController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => Hash::make('password')
+            'password' => Hash::make('#Password123')
             // 'image' => $imagePath,
             // 'created_by' => auth()->id(),
         ]);
+
+
+        $loginLink = config('custom.login_link');
+
+        // send email notif
+        Mail::to($request->email)->send(new NotifyUserAccountMail($user,'#Password123', $loginLink));
 
         return response()->json([
             'message' => 'User created successfully!',

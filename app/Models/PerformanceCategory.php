@@ -9,7 +9,7 @@ use App\Models\AthletePerformance;
 
 class PerformanceCategory extends Model
 {
-    protected $fillable = ['sport_id','coach_id','name'];
+    protected $fillable = ['sport_id','coach_id','name','description'];
 
     public function coach()
     {

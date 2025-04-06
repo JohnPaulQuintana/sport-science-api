@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sport;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryList;
 use App\Models\GroupChat;
 use App\Models\GroupChatUser;
 use Illuminate\Http\Request;
@@ -126,10 +127,12 @@ class SportController extends Controller
     {
         $athletes = User::where('role','athlete')->get();
         $sport = Sport::with(['group','athletes'])->findOrFail($id);
+        $categories = CategoryList::get();
         return response()->json([
             'status'=>200,
             'sport' => $sport,
-            'athletes' => $athletes
+            'athletes' => $athletes,
+            'categories'=>$categories
         ]);
     }
 
