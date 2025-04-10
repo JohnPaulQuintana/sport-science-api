@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/sports-edit', [SportController::class, 'edit']);
 
         Route::post('/users', [AccountController::class, 'createUser']);
+        // Route::post('/users/{id}', [AccountController::class, 'updateUser']);
 
         // summay
         Route::get('/summary',[SummaryController::class, 'summary']);
