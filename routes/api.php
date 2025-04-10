@@ -8,8 +8,10 @@ use App\Http\Controllers\Sport\SportController;
 use App\Http\Controllers\Summary\SummaryController;
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Athlete\AthleteController;
+use App\Http\Controllers\EventScheduling\EventSchedulingController;
 use App\Http\Controllers\GroupChat\GroupChatController;
 use App\Http\Controllers\Performance\PerformanceCategoryController;
+use App\Http\Controllers\SportAssigned\SportAssignedController;
 
 // Route::get('/user-public', function (Request $request) {
 //     $users = User::get();
@@ -54,7 +56,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/summary-coach',[SummaryController::class, 'summaryCoach']);
 
         Route::get('/sport/{id}', [SportController::class, 'getSportById']);
-
+        Route::get('/assigned/{id}', [SportAssignedController::class, 'sport_assigned']);
+        Route::post('/create/event', [EventSchedulingController::class, 'addEvent']);
+        Route::post('/update/event/{id}', [EventSchedulingController::class, 'update']);
+        Route::delete('/delete/event/{id}', [EventSchedulingController::class, 'destroy']);
         Route::post('/logout', [AuthController::class, 'logout']);
         // Add other coach routes here
     });

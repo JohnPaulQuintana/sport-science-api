@@ -59,4 +59,10 @@ class Sport extends Model
     {
         return $this->hasMany(PerformanceCategory::class, 'sport_id');;
     }
+
+    //has many events
+    public function events()
+    {
+        return $this->hasMany(EventScheduling::class);
+    }
 }

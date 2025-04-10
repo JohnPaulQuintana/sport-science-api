@@ -34,7 +34,7 @@ class SummaryController extends Controller
     public function summaryCoach()
     {
         // $sports = Sport::where()->orderBy('created_at', 'desc')->get();
-        $sports = SportAssignment::with('sport')->where('user_id',auth()->id())->get();
+        $sports = SportAssignment::with('sport.events')->where('user_id',auth()->id())->get();
         return response()->json([
             'assign_sports' => $sports,
             'sports' => count($sports)
@@ -44,7 +44,7 @@ class SummaryController extends Controller
     public function summaryAthelete()
     {
         // $sports = Sport::where()->orderBy('created_at', 'desc')->get();
-        $sports = SportAssignment::with('sport')->where('user_id',auth()->id())->get();
+        $sports = SportAssignment::with('sport.events')->where('user_id',auth()->id())->get();
         return response()->json([
             'assign_sports' => $sports,
             'sports' => count($sports)
