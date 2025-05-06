@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
-    protected $fillable = ['group_chat_id','sender_id','message'];
+    protected $fillable = ['group_chat_id','sender_id','message','attachment'];
 
     public function sender(): BelongsTo {
         return $this->belongsTo(User::class, 'sender_id');

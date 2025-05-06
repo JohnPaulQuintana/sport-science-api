@@ -7,6 +7,7 @@ use App\Models\AthletePerformance;
 use App\Models\CategoryList;
 use Illuminate\Http\Request;
 use App\Models\PerformanceCategory;
+use App\Models\Recommendation;
 use App\Models\Sport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -297,6 +298,7 @@ class PerformanceCategoryController extends Controller
         })->map(function ($athleteData, $athleteName) {
             return [
                 'athlete_id' => $athleteData->first()['athlete_id'],
+                'recommendations' => Recommendation::where('user_id',$athleteData->first()['athlete_id'])->latest()->get(),
                 'athlete' => $athleteName,
                 'sport' => $athleteData->first()['sport'],
                 'performance' => $athleteData->mapWithKeys(function ($item) {

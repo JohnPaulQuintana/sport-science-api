@@ -11,6 +11,7 @@ use App\Http\Controllers\Athlete\AthleteController;
 use App\Http\Controllers\EventScheduling\EventSchedulingController;
 use App\Http\Controllers\GroupChat\GroupChatController;
 use App\Http\Controllers\Performance\PerformanceCategoryController;
+use App\Http\Controllers\Recommendation\RecommendationController;
 use App\Http\Controllers\SportAssigned\SportAssignedController;
 
 // Route::get('/user-public', function (Request $request) {
@@ -43,8 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('athlete')->group(function () {
          // summay
         Route::get('/summary-athlete',[SummaryController::class, 'summaryAthelete']);
+        Route::get('performance/analysis/single/{sport_id}',[PerformanceCategoryController::class, 'getSingleAthletePerformance']);
 
-        Route::post('/assign-sport',[SportController::class,'assignAthlete']);
 
         Route::get('/sport/{id}', [SportController::class, 'getSportById']);
 
@@ -56,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // summay
         Route::get('/summary-coach',[SummaryController::class, 'summaryCoach']);
 
+        Route::post('/assign-sport',[SportController::class,'assignAthlete']);
+
         Route::get('/sport/{id}', [SportController::class, 'getSportById']);
         Route::get('/assigned/{id}', [SportAssignedController::class, 'sport_assigned']);
         Route::post('/create/event', [EventSchedulingController::class, 'addEvent']);
@@ -63,6 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/delete/event/{id}', [EventSchedulingController::class, 'destroy']);
         Route::post('/logout', [AuthController::class, 'logout']);
         // Add other coach routes here
+        Route::post('/recommendation', [RecommendationController::class, 'insert']);
+        Route::post('/recommendation/update', [RecommendationController::class, 'update']);
+        Route::post('/recommendation/delete', [RecommendationController::class, 'delete']);
     });
 
     Route::prefix('profile')->group(function(){
@@ -121,4 +127,4 @@ Route::get('/storage/{path}', function ($path) {
 
 // testing for analysis
 Route::get('performance/analysis/{sport_id}',[PerformanceCategoryController::class, 'analyzePerformance']);
-Route::get('performance/analysis/single/{sport_id}',[PerformanceCategoryController::class, 'getSingleAthletePerformance']);
+

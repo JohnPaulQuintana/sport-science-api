@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        User::factory(11)->create();
+        // User::factory(11)->create();
 
         //create default sports;
         $sports = Sport::factory()->createMany([
@@ -60,26 +60,14 @@ class DatabaseSeeder extends Seeder
         }
 
          // Assign users to group chats
-         $coach = User::where('role', 'coach')->first();
-         $athlete = User::where('role', 'athlete')->first();
-         $groupChats = GroupChat::all();
+        //  $coach = User::where('role', 'coach')->first();
+        //  $athlete = User::where('role', 'athlete')->first();
+        //  $groupChats = GroupChat::all();
 
-         foreach ($groupChats as $groupChat) {
-             $groupChat->users()->attach([$coach->id, $athlete->id]);
-         }
-        // User::factory()->create([
-        //     'name' => 'Coach 1',
-        //     'email' => fake()->unique()->safeEmail(),
-        //     'email_verified_at' => now(),
-        //     'role' => 'coach',
-        // ]);
+        //  foreach ($groupChats as $groupChat) {
+        //      $groupChat->users()->attach([$coach->id, $athlete->id]);
+        //  }
 
-        // User::factory()->create([
-        //     'name' => 'Athlete 1',
-        //     'email' => fake()->unique()->safeEmail(),
-        //     'email_verified_at' => now(),
-        //     'role' => 'athlete',
-        // ]);
 
     }
 }

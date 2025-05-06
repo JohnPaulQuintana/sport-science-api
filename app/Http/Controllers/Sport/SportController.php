@@ -171,7 +171,7 @@ class SportController extends Controller
         ]);
 
         $athlete = User::where('id', $request->athlete_id)->where('role', 'athlete')->first();
-
+        // return response()->json(['found'=>$athlete]);
         if (!$athlete) {
             return response()->json(['message' => 'Invalid athlete'], 400);
         }

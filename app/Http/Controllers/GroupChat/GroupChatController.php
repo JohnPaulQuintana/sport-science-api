@@ -54,12 +54,22 @@ class GroupChatController extends Controller
     // Send a message in a group chat
     public function sendMessage(Request $request, $id)
     {
-        $request->validate(['message' => 'required|string']);
+        $request->validate([
+            'message' => 'required|string',
+            'attachment' => 'nullable|file|max:10240', // max 10MB
+        ]);
+
+        $attachmentPath = null;
+
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+        }
 
         $message = Message::create([
             'group_chat_id' => $id,
             'sender_id' => Auth::id(),
             'message' => $request->message,
+            'attachment' => $attachmentPath, // store file path (nullable column)
         ]);
 
         return response()->json([
